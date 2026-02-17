@@ -1,9 +1,13 @@
+import { Link } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function Index() {
+export default function NotFoundScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
+      <Text style={styles.text}>Not Found</Text>
+      <Link href="/" style={[styles.link, styles.text]}>
+        Back to Home
+      </Link>
     </View>
   );
 }
@@ -17,5 +21,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#fff",
+  },
+  link: {
+    textDecorationLine: "underline",
   },
 });
