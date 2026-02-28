@@ -16,10 +16,7 @@ export default function EmojiPicker({ isVisible, children, onClose }: Props) {
         <View style={styles.modalContent}>
           <View style={styles.grabber} />
           <View style={styles.titleContainer}>
-            <View style={styles.titleCopy}>
-              <Text style={styles.eyebrow}>Sticker Drawer</Text>
-              <Text style={styles.title}>Choose a sticker</Text>
-            </View>
+            <Text style={styles.title}>Choose a sticker</Text>
             <Pressable onPress={onClose} style={styles.closeButton}>
               <MaterialIcons name="close" color={theme.colors.text} size={22} />
             </Pressable>
@@ -39,7 +36,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "100%",
-    minHeight: 300,
+    minHeight: 260,
     backgroundColor: theme.colors.surface,
     borderTopRightRadius: 28,
     borderTopLeftRadius: 28,
@@ -62,16 +59,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  titleCopy: {
-    gap: 6,
-  },
-  eyebrow: {
-    color: theme.colors.accentAlt,
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
   },
   title: {
     color: theme.colors.text,

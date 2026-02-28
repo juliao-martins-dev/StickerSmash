@@ -7,7 +7,6 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 
@@ -18,36 +17,12 @@ type Props = {
 
 export default function EmojiList({ onSelect, onCloseModal }: Props) {
   const [emoji] = useState([
-    {
-      id: "spark",
-      label: "Spark",
-      source: require("../assets/images/emoji1.png"),
-    },
-    {
-      id: "blush",
-      label: "Blush",
-      source: require("../assets/images/emoji2.png"),
-    },
-    {
-      id: "party",
-      label: "Party",
-      source: require("../assets/images/emoji3.png"),
-    },
-    {
-      id: "hype",
-      label: "Hype",
-      source: require("../assets/images/emoji4.png"),
-    },
-    {
-      id: "cool",
-      label: "Cool",
-      source: require("../assets/images/emoji5.png"),
-    },
-    {
-      id: "shine",
-      label: "Shine",
-      source: require("../assets/images/emoji6.png"),
-    },
+    { id: "spark", source: require("../assets/images/emoji1.png") },
+    { id: "blush", source: require("../assets/images/emoji2.png") },
+    { id: "party", source: require("../assets/images/emoji3.png") },
+    { id: "hype", source: require("../assets/images/emoji4.png") },
+    { id: "cool", source: require("../assets/images/emoji5.png") },
+    { id: "shine", source: require("../assets/images/emoji6.png") },
   ]);
 
   return (
@@ -68,7 +43,6 @@ export default function EmojiList({ onSelect, onCloseModal }: Props) {
           <View style={styles.imageWrap}>
             <Image source={item.source} style={styles.image} />
           </View>
-          <Text style={styles.label}>{item.label}</Text>
         </Pressable>
       )}
     />
@@ -82,15 +56,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    width: 114,
-    padding: 12,
+    width: 100,
+    padding: 10,
     borderRadius: 22,
     backgroundColor: theme.colors.surfaceElevated,
     borderWidth: 1,
     borderColor: theme.colors.line,
     alignItems: "center",
     marginRight: 14,
-    gap: 10,
   },
   cardPressed: {
     opacity: 0.92,
@@ -104,12 +77,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 72,
-    height: 72,
-  },
-  label: {
-    color: theme.colors.text,
-    fontSize: 13,
-    fontWeight: "700",
+    width: 68,
+    height: 68,
   },
 });

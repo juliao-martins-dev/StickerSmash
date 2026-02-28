@@ -15,8 +15,6 @@ import {
   Alert,
   ImageSourcePropType,
   Platform,
-  Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -40,7 +38,7 @@ export default function Index() {
   const imageRef = useRef<View>(null);
   const { width } = useWindowDimensions();
 
-  const previewWidth = Math.min(width - 48, 360);
+  const previewWidth = Math.min(width - 56, 330);
   const previewHeight = Math.round(previewWidth * previewAspectRatio);
   const stickerSize = Math.max(68, Math.round(previewWidth * 0.2));
 
@@ -125,31 +123,10 @@ export default function Index() {
           <View style={styles.glowBottom} />
         </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.hero}>
-            <Text style={styles.eyebrow}>Sticker Smash Studio</Text>
-            <Text style={styles.heroTitle}>
-              Turn any photo into a punchy sticker postcard.
-            </Text>
-            <Text style={styles.heroText}>
-              Build a playful composition with a framed canvas, draggable
-              stickers, and one-tap export.
-            </Text>
-          </View>
-
-          <View style={styles.stageCard}>
-            <View style={styles.stageHeader}>
-              <View style={styles.stageCopy}>
-                <Text style={styles.stageEyebrow}>Canvas</Text>
-                <Text style={styles.stageTitle}>
-                  {selectedImage
-                    ? "Your photo is loaded and ready to style."
-                    : "Start with the sample image or bring your own."}
-                </Text>
-              </View>
+        <View style={styles.container}>
+          <View style={styles.stage}>
+            <View style={[styles.stageHeader, { width: previewWidth }]}>
+              <Text style={styles.badge}>Sticker Smash</Text>
               <View style={styles.statusPill}>
                 <View style={styles.statusDot} />
                 <Text style={styles.statusText}>
@@ -158,7 +135,7 @@ export default function Index() {
               </View>
             </View>
 
-            <View style={styles.stageFrame}>
+            <View style={styles.previewShell}>
               <View
                 ref={imageRef}
                 collapsable={false}
@@ -182,27 +159,14 @@ export default function Index() {
               </View>
             </View>
 
-            <View style={styles.stageFooter}>
-              <Text style={styles.stageFooterText}>
-                Double tap a sticker to scale it. Drag to position it exactly
-                where you want it.
-              </Text>
-              <Pressable onPress={onAddSticker} style={styles.inlineLink}>
-                <Text style={styles.inlineLinkText}>Open sticker drawer</Text>
-              </Pressable>
-            </View>
+            <Text style={styles.helperText}>
+              {showAppOptions
+                ? "Drag to move. Double tap to resize."
+                : "Choose a photo or start with the sample."}
+            </Text>
           </View>
 
-          <View style={styles.controlCard}>
-            <Text style={styles.controlTitle}>
-              {showAppOptions ? "Studio controls" : "Start with an image"}
-            </Text>
-            <Text style={styles.controlText}>
-              {showAppOptions
-                ? "Swap the artwork, add more personality, or export the final composition."
-                : "Choose a photo from your library or jump in with the built-in artwork."}
-            </Text>
-
+          <View style={styles.controlsCard}>
             {showAppOptions ? (
               <View style={styles.optionsRow}>
                 <IconButton
@@ -223,14 +187,12 @@ export default function Index() {
               <View style={styles.buttonStack}>
                 <Button
                   label="Choose a photo"
-                  hint="Import a shot from your gallery"
                   icon="photo-library"
                   theme="primary"
                   onPress={pickImageAsync}
                 />
                 <Button
-                  label="Use sample artwork"
-                  hint="Start editing with the built-in image"
+                  label="Use this photo"
                   icon="auto-awesome"
                   theme="secondary"
                   onPress={() => setShowAppOptions(true)}
@@ -238,7 +200,7 @@ export default function Index() {
               </View>
             )}
           </View>
-        </ScrollView>
+        </View>
 
         <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
           <EmojiList onSelect={setPickedImage} onCloseModal={onModalClose} />
@@ -262,85 +224,46 @@ const styles = StyleSheet.create({
   },
   glowTop: {
     position: "absolute",
-    top: -80,
-    right: -40,
-    width: 240,
-    height: 240,
-    borderRadius: 120,
+    top: -70,
+    right: -30,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
     backgroundColor: "rgba(103, 232, 249, 0.16)",
   },
   glowBottom: {
     position: "absolute",
-    bottom: 120,
-    left: -80,
+    bottom: 140,
+    left: -90,
     width: 280,
     height: 280,
     borderRadius: 140,
     backgroundColor: "rgba(255, 138, 61, 0.18)",
   },
-  scrollContent: {
+  container: {
+    flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 18,
-    paddingBottom: 138,
-    gap: 22,
+    paddingTop: 10,
+    paddingBottom: 120,
+    justifyContent: "space-between",
   },
-  hero: {
-    gap: 10,
-  },
-  eyebrow: {
-    color: theme.colors.accentAlt,
-    fontSize: 13,
-    fontWeight: "700",
-    letterSpacing: 2.2,
-    textTransform: "uppercase",
-  },
-  heroTitle: {
-    color: theme.colors.text,
-    fontSize: 34,
-    lineHeight: 38,
-    fontWeight: "800",
-  },
-  heroText: {
-    color: theme.colors.muted,
-    fontSize: 15,
-    lineHeight: 24,
-    maxWidth: 560,
-  },
-  stageCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.line,
-    padding: 20,
-    gap: 18,
-    shadowColor: theme.colors.shadow,
-    shadowOpacity: 0.28,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 16 },
-    elevation: 10,
+  stage: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 16,
   },
   stageHeader: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
   },
-  stageCopy: {
-    flex: 1,
-    gap: 6,
-  },
-  stageEyebrow: {
-    color: theme.colors.accent,
+  badge: {
+    color: theme.colors.accentSoft,
     fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1.3,
+    fontWeight: "800",
+    letterSpacing: 1.6,
     textTransform: "uppercase",
-  },
-  stageTitle: {
-    color: theme.colors.text,
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: "700",
   },
   statusPill: {
     flexDirection: "row",
@@ -349,7 +272,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: theme.radius.pill,
-    backgroundColor: theme.colors.surfaceSoft,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderWidth: 1,
     borderColor: theme.colors.line,
   },
@@ -364,66 +287,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
   },
-  stageFrame: {
-    alignSelf: "center",
+  previewShell: {
     padding: 10,
-    borderRadius: 28,
-    backgroundColor: theme.colors.pageAlt,
+    borderRadius: 30,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderColor: theme.colors.line,
+    shadowColor: theme.colors.shadow,
+    shadowOpacity: 0.26,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 16 },
+    elevation: 10,
   },
   captureArea: {
     borderRadius: 24,
     overflow: "hidden",
-    backgroundColor: theme.colors.page,
+    backgroundColor: theme.colors.pageAlt,
   },
-  stageFooter: {
-    gap: 10,
-  },
-  stageFooterText: {
+  helperText: {
     color: theme.colors.muted,
     fontSize: 14,
-    lineHeight: 22,
+    lineHeight: 20,
   },
-  inlineLink: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: theme.radius.pill,
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-  },
-  inlineLinkText: {
-    color: theme.colors.accentSoft,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  controlCard: {
+  controlsCard: {
     backgroundColor: theme.colors.surfaceElevated,
     borderRadius: theme.radius.md,
     borderWidth: 1,
     borderColor: theme.colors.line,
-    padding: 20,
-    gap: 18,
-  },
-  controlTitle: {
-    color: theme.colors.text,
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  controlText: {
-    color: theme.colors.muted,
-    fontSize: 15,
-    lineHeight: 22,
+    padding: 16,
   },
   buttonStack: {
-    gap: 14,
+    gap: 12,
   },
   optionsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     gap: 12,
   },
 });

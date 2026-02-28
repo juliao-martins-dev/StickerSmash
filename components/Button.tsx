@@ -77,14 +77,14 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 84,
+    minHeight: 76,
     borderRadius: 26,
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
     flexDirection: "row",
     paddingHorizontal: 18,
-    paddingVertical: 16,
+    paddingVertical: 14,
     gap: 14,
     borderWidth: 1,
   },
@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   iconWrap: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     alignItems: "center",
     justifyContent: "center",
   },
