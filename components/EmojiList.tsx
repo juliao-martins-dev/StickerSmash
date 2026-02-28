@@ -1,6 +1,5 @@
 import { Image } from "expo-image";
 import { theme } from "@/constants/theme";
-import { useState } from "react";
 import {
   FlatList,
   ImageSourcePropType,
@@ -15,23 +14,34 @@ type Props = {
   onCloseModal: () => void;
 };
 
-export default function EmojiList({ onSelect, onCloseModal }: Props) {
-  const [emoji] = useState([
-    { id: "spark", source: require("../assets/images/emoji1.png") },
-    { id: "blush", source: require("../assets/images/emoji2.png") },
-    { id: "party", source: require("../assets/images/emoji3.png") },
-    { id: "hype", source: require("../assets/images/emoji4.png") },
-    { id: "cool", source: require("../assets/images/emoji5.png") },
-    { id: "shine", source: require("../assets/images/emoji6.png") },
-  ]);
+const EMOJI = [
+  { id: "spark", source: require("../assets/images/emoji1.png") },
+  { id: "blush", source: require("../assets/images/emoji2.png") },
+  { id: "party", source: require("../assets/images/emoji3.png") },
+  { id: "hype", source: require("../assets/images/emoji4.png") },
+  { id: "cool", source: require("../assets/images/emoji5.png") },
+  { id: "shine", source: require("../assets/images/emoji6.png") },
+] as const;
 
+const ITEM_WIDTH = 114;
+
+export default function EmojiList({ onSelect, onCloseModal }: Props) {
   return (
     <FlatList
       horizontal
-      showsHorizontalScrollIndicator={Platform.OS === "web"}
-      data={emoji}
+      data={EMOJI}
       keyExtractor={(item) => item.id}
+      showsHorizontalScrollIndicator={Platform.OS === "web"}
       contentContainerStyle={styles.listContainer}
+      initialNumToRender={EMOJI.length}
+      maxToRenderPerBatch={EMOJI.length}
+      windowSize={3}
+      removeClippedSubviews={Platform.OS !== "web"}
+      getItemLayout={(_, index) => ({
+        length: ITEM_WIDTH,
+        offset: ITEM_WIDTH * index,
+        index,
+      })}
       renderItem={({ item }) => (
         <Pressable
           style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}

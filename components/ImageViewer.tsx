@@ -21,6 +21,7 @@ export default function ImageViewer({
     <View style={[styles.frame, { width, height }]}>
       <Image
         source={source}
+        cachePolicy="memory-disk"
         contentFit="cover"
         transition={180}
         style={styles.image}

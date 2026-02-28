@@ -7,10 +7,9 @@ import IconButton from "@/components/IconButton";
 import ImageViewer from "@/components/ImageViewer";
 import { theme } from "@/constants/theme";
 
-import domtoimage from "dom-to-image";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   ImageSourcePropType,
@@ -31,6 +30,7 @@ export default function Index() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [pickedImage, setPickedImage] = useState<
     ImageSourcePropType | undefined
   >(undefined);
@@ -38,15 +38,9 @@ export default function Index() {
   const imageRef = useRef<View>(null);
   const { width } = useWindowDimensions();
 
-  const previewWidth = Math.min(width - 56, 330);
+  const previewWidth = Math.max(220, Math.min(width - 56, 330));
   const previewHeight = Math.round(previewWidth * previewAspectRatio);
   const stickerSize = Math.max(68, Math.round(previewWidth * 0.2));
-
-  useEffect(() => {
-    if (!permissionResponse?.granted) {
-      requestPermission();
-    }
-  }, [permissionResponse?.granted, requestPermission]);
 
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -67,6 +61,7 @@ export default function Index() {
   const onReset = () => {
     setSelectedImage(null);
     setPickedImage(undefined);
+    setIsModalVisible(false);
     setShowAppOptions(false);
   };
 
@@ -79,28 +74,45 @@ export default function Index() {
   };
 
   const onSaveImageAsync = async () => {
+    if (isSaving || !imageRef.current) {
+      return;
+    }
+
+    setIsSaving(true);
+
     if (Platform.OS !== "web") {
       try {
+        const permission =
+          permissionResponse?.granted ?? (await requestPermission()).granted;
+
+        if (!permission) {
+          Alert.alert(
+            "Permission needed",
+            "Allow photo library access to save your image."
+          );
+          return;
+        }
+
         const localUri = await captureRef(imageRef, {
-          format: "png",
-          quality: 1,
+          format: "jpg",
+          quality: 0.92,
         });
 
         await MediaLibrary.saveToLibraryAsync(localUri);
         Alert.alert("Saved", "Your sticker composition is in the library.");
       } catch (error) {
         console.log(error);
+        Alert.alert("Save failed", "The image could not be saved.");
+      } finally {
+        setIsSaving(false);
       }
 
       return;
     }
 
-    if (!imageRef.current) {
-      return;
-    }
-
     try {
-      const dataUrl = await domtoimage.toJpeg(imageRef.current, {
+      const { default: domtoimage } = await import("dom-to-image");
+      const dataUrl = await domtoimage.toJpeg(imageRef.current as unknown as Node, {
         quality: 0.95,
         width: previewWidth,
         height: previewHeight,
@@ -112,6 +124,9 @@ export default function Index() {
       link.click();
     } catch (error) {
       console.log(error);
+      Alert.alert("Save failed", "The image could not be downloaded.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
