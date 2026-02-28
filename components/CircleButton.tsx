@@ -1,5 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Pressable, StyleSheet, View } from "react-native";
+import { theme } from "@/constants/theme";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   onPress: () => void;
@@ -8,28 +9,48 @@ type Props = {
 export default function CircleButton({ onPress }: Props) {
   return (
     <View style={styles.circleButtonContainer}>
-      <Pressable style={styles.circleButton} onPress={onPress}>
-        <MaterialIcons name="add" size={38} color="#25292e" />
+      <Pressable
+        style={({ pressed }) => [
+          styles.circleButton,
+          pressed && styles.circleButtonPressed,
+        ]}
+        onPress={onPress}
+      >
+        <MaterialIcons name="add-reaction" size={30} color={theme.colors.page} />
       </Pressable>
+      <Text style={styles.circleLabel}>Sticker</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   circleButtonContainer: {
-    width: 84,
-    height: 84,
-    marginHorizontal: 60,
-    borderWidth: 4,
-    borderColor: "#ffd33d",
-    borderRadius: 42,
-    padding: 3,
+    alignItems: "center",
+    gap: 10,
   },
   circleButton: {
-    flex: 1,
+    width: 92,
+    height: 92,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 42,
-    backgroundColor: "#fff",
+    borderRadius: 46,
+    backgroundColor: theme.colors.accent,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.14)",
+    shadowColor: theme.colors.shadow,
+    shadowOpacity: 0.3,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
+  },
+  circleButtonPressed: {
+    opacity: 0.94,
+    transform: [{ scale: 0.98 }],
+  },
+  circleLabel: {
+    color: theme.colors.text,
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: 0.3,
   },
 });

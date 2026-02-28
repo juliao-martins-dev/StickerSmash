@@ -1,70 +1,140 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { theme } from "@/constants/theme";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   label: string;
+  hint?: string;
+  icon?: keyof typeof MaterialIcons.glyphMap;
   theme?: "primary" | "secondary";
   onPress?: () => void;
 };
 
-export default function Button({ label, theme, onPress }: Props) {
-  if (theme === "primary") {
-    return (
-      <View
-        style={[
-          styles.buttonContainer,
-          { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 },
-        ]}
-      >
-        <Pressable
-          style={[styles.button, { backgroundColor: "#fff" }]}
-          onPress={onPress}
-        >
-          <FontAwesome
-            name="picture-o"
-            size={18}
-            color="#25292e"
-            style={styles.buttonIcon}
-          />
-          <Text style={[styles.buttonLabel, { color: "#25292e" }]}>
-            {label}
-          </Text>
-        </Pressable>
-      </View>
-    );
-  }
-
+export default function Button({
+  label,
+  hint,
+  icon,
+  theme: variant = "secondary",
+  onPress,
+}: Props) {
   return (
-    <View style={styles.buttonContainer}>
-      <Pressable style={styles.button} onPress={onPress}>
-        <Text style={styles.buttonLabel}>{label}</Text>
-      </Pressable>
-    </View>
+    <Pressable
+      style={({ pressed }) => [
+        styles.button,
+        variant === "primary" ? styles.buttonPrimary : styles.buttonSecondary,
+        pressed && styles.buttonPressed,
+      ]}
+      onPress={onPress}
+    >
+      {icon ? (
+        <View
+          style={[
+            styles.iconWrap,
+            variant === "primary"
+              ? styles.iconWrapPrimary
+              : styles.iconWrapSecondary,
+          ]}
+        >
+          <MaterialIcons
+            name={icon}
+            size={20}
+            color={
+              variant === "primary"
+                ? theme.colors.page
+                : theme.colors.accentSoft
+            }
+          />
+        </View>
+      ) : null}
+
+      <View style={styles.copyWrap}>
+        <Text
+          style={[
+            styles.buttonLabel,
+            variant === "primary"
+              ? styles.buttonLabelPrimary
+              : styles.buttonLabelSecondary,
+          ]}
+        >
+          {label}
+        </Text>
+        {hint ? (
+          <Text
+            style={[
+              styles.buttonHint,
+              variant === "primary"
+                ? styles.buttonHintPrimary
+                : styles.buttonHintSecondary,
+            ]}
+          >
+            {hint}
+          </Text>
+        ) : null}
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    width: 320,
-    height: 68,
-    marginHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 3,
-  },
   button: {
-    borderRadius: 10,
+    minHeight: 84,
+    borderRadius: 26,
     width: "100%",
-    height: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    gap: 14,
+    borderWidth: 1,
+  },
+  buttonPrimary: {
+    backgroundColor: theme.colors.accent,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+  },
+  buttonSecondary: {
+    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    borderColor: theme.colors.line,
+  },
+  buttonPressed: {
+    opacity: 0.92,
+    transform: [{ scale: 0.99 }],
+  },
+  iconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row",
   },
-  buttonIcon: {
-    paddingRight: 8,
+  iconWrapPrimary: {
+    backgroundColor: "rgba(8, 17, 32, 0.14)",
+  },
+  iconWrapSecondary: {
+    backgroundColor: "rgba(255, 138, 61, 0.14)",
+  },
+  copyWrap: {
+    flex: 1,
+    gap: 4,
   },
   buttonLabel: {
-    color: "#fff",
-    fontSize: 16,
+    fontSize: 17,
+    fontWeight: "800",
+  },
+  buttonLabelPrimary: {
+    color: theme.colors.page,
+  },
+  buttonLabelSecondary: {
+    color: theme.colors.text,
+  },
+  buttonHint: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  buttonHintPrimary: {
+    color: "rgba(8, 17, 32, 0.72)",
+  },
+  buttonHintSecondary: {
+    color: theme.colors.muted,
   },
 });
