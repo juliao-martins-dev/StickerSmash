@@ -24,10 +24,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { captureRef } from "react-native-view-shot";
 
 const placeholderImage = require("@/assets/images/background-image.png");
+const placeholderImageKey = "placeholder-image";
 const previewAspectRatio = 440 / 320;
 
 export default function Index() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [baseImageUri, setBaseImageUri] = useState<string | null>(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -43,6 +44,8 @@ export default function Index() {
   const previewWidth = Math.max(220, Math.min(width - 56, 330));
   const previewHeight = Math.round(previewWidth * previewAspectRatio);
   const stickerSize = Math.max(68, Math.round(previewWidth * 0.2));
+  const previewSource = baseImageUri ? { uri: baseImageUri } : placeholderImage;
+  const previewSourceKey = baseImageUri ?? placeholderImageKey;
 
   const pickImageAsync = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -52,7 +55,7 @@ export default function Index() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      setBaseImageUri(result.assets[0].uri);
       setShowAppOptions(true);
       return;
     }
@@ -61,13 +64,17 @@ export default function Index() {
   };
 
   const onReset = () => {
-    setSelectedImage(null);
+    setBaseImageUri(null);
     setPickedImage(undefined);
     setIsModalVisible(false);
     setShowAppOptions(false);
   };
 
   const onAddSticker = () => {
+    if (!showAppOptions) {
+      return;
+    }
+
     setIsModalVisible(true);
   };
 
@@ -168,8 +175,8 @@ export default function Index() {
                 ]}
               >
                 <ImageViewer
-                  imageSource={placeholderImage}
-                  selectedImage={selectedImage}
+                  source={previewSource}
+                  sourceKey={previewSourceKey}
                   width={previewWidth}
                   height={previewHeight}
                 />
@@ -218,7 +225,10 @@ export default function Index() {
                   label="Use this photo"
                   icon="auto-awesome"
                   theme="secondary"
-                  onPress={() => setShowAppOptions(true)}
+                  onPress={() => {
+                    setBaseImageUri(null);
+                    setShowAppOptions(true);
+                  }}
                 />
               </View>
             )}

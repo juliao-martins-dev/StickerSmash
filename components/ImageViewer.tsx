@@ -3,23 +3,17 @@ import { theme } from "@/constants/theme";
 import { ImageSourcePropType, StyleSheet, View } from "react-native";
 
 type Props = {
-  imageSource: ImageSourcePropType;
-  selectedImage?: string | null;
+  source: ImageSourcePropType;
+  sourceKey: string;
   width: number;
   height: number;
 };
 
-export default function ImageViewer({
-  imageSource,
-  selectedImage,
-  width,
-  height,
-}: Props) {
-  const source = selectedImage ? { uri: selectedImage } : imageSource;
-
+export default function ImageViewer({ source, sourceKey, width, height }: Props) {
   return (
     <View style={[styles.frame, { width, height }]}>
       <Image
+        key={sourceKey}
         source={source}
         cachePolicy="memory-disk"
         contentFit="cover"
