@@ -34,7 +34,9 @@ export default function Index() {
   const [pickedImage, setPickedImage] = useState<
     ImageSourcePropType | undefined
   >(undefined);
-  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions({
+    writeOnly: true,
+  });
   const imageRef = useRef<View>(null);
   const { width } = useWindowDimensions();
 
@@ -82,15 +84,21 @@ export default function Index() {
 
     if (Platform.OS !== "web") {
       try {
-        const permission =
-          permissionResponse?.granted ?? (await requestPermission()).granted;
+        const needsMediaLibraryPermission =
+          Platform.OS === "ios" ||
+          (Platform.OS === "android" && Platform.Version < 33);
 
-        if (!permission) {
-          Alert.alert(
-            "Permission needed",
-            "Allow photo library access to save your image."
-          );
-          return;
+        if (needsMediaLibraryPermission) {
+          const permission =
+            permissionResponse?.granted ?? (await requestPermission()).granted;
+
+          if (!permission) {
+            Alert.alert(
+              "Permission needed",
+              "Allow photo library access to save your image."
+            );
+            return;
+          }
         }
 
         const localUri = await captureRef(imageRef, {
